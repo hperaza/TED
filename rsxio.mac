@@ -26,6 +26,7 @@
 	subttl	I/O routines - RSX180 version
 
 	include	AST.INC
+	include	DCB.INC
 	include	FCB.INC
 	include	TCB.INC
 	include	QIO.INC
@@ -75,8 +76,7 @@ TTINIT:	call	TTCLR		; init output buffer
 	ld	e,AST.UC OR AST.CK
 	ld	d,1		; enable
 	SC	.ASTCT
-	ld	e,'T'
-	ld	d,'I'
+	ld	de,'TI'
 	ld	c,0
 	ld	b,TTLUN
 	SC	.ALUN		; assign TTLUN to TI:
@@ -86,7 +86,9 @@ TTINIT:	call	TTCLR		; init output buffer
 	ld	hl,QIOATT
 	SC	.QIO		; .QIOW
 	ret	c		; return error if queuing failed
-	ld	a,(QIOSB)	; fetch return code
+	ld	hl,QIOSMC	; fetch return code
+	SC	.QIO
+	ret	c
 	ld	a,LF		; as required by RSX180
 	call	PUTC
 	ret
@@ -780,11 +782,13 @@ EXIT:	call	TTFLSH
 
 	dseg
 
+TSKTCB:	ds	TCBSZ
+
 QIOATT:	QIOW$	IO.ATT,TTLUN,EFN,QIOSB
+QIOSMC:	QIOW$	SF.SMC,TTLUN,EFN,QIOSB,<TCBIN,2>
 QIOEF:	QIOW$	IO.ACC,EFLUN,EFN,QIOSB,<,,,,>
 QIOWF:	QIOW$	IO.CRE,WFLUN,EFN,QIOSB,<,,,,>
-
-TSKTCB:	ds	TCBSZ
+TCBIN:	db	TC.BIN,1
 
 TTQLEN:	db	0		; TTY queue length (number of chars in queue)
 TTQOUT:	dw	TTFIFO		; TTY queue out pointer
