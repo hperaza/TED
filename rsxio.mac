@@ -31,7 +31,6 @@
 	include	TCB.INC
 	include	QIO.INC
 	include	SYSFN.INC
-	include	SYSCONF.INC
 	include	ERRORS.INC
 	include	TED.INC
 
@@ -70,6 +69,9 @@ MKTEFN	equ	5		; event flag for mark time
 
 TTINIT:	call	TTCLR		; init output buffer
 	call	TTQCLR		; reset input queue
+	ld	hl,TCKSEC
+	ld	c,I.TCKS
+	SC	.GIN		; get ticks/sec for timing functions
 	ld	bc,ASTSVC
 	ld	de,ASTBUF
 	SC	.ASTDF		; setup unsolicited char AST
@@ -133,7 +135,7 @@ gc3:	ld	a,(UFLAG)
 	ld	c,-1
 	SC	.CMKT		; cancel any outstanding mark time requests
 
-	ld	a,TCKSEC
+	ld	a,(TCKSEC)
 	rrca
 	rrca
 	and	3Fh		; 0.25 secs
@@ -766,9 +768,9 @@ TTQIN:	dw	TTFIFO		; TTY queue in pointer
 
 TTFIFO:	ds	64		; 64 bytes used for input queue
 
+TCKSEC:	ds	2
 ASTFLG:	ds	1
 ASTBUF:	ds	10
-
 CMLBUF:	ds	80
 
 WFDB:	dw	0		; FDB for temporary work file on current disk
