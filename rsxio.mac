@@ -693,9 +693,9 @@ prf4:	ld	a,(hl)
 
 GETTOP:	push	de
 	ld	hl,0
-	ld	de,TSKTCB
+	ld	de,GTKBUF
 	SC	.GTSK
-	ld	hl,(TSKTCB+T.END)
+	ld	hl,(GTKBUF+GT.END)
 	pop	de
 	ret
 
@@ -752,12 +752,12 @@ EXIT:	call	TTFLSH
 
 	dseg
 
-TSKTCB:	ds	TCBSZ
+GTKBUF:	ds	GTKSZ
 
 QIOATT:	QIOW$	IO.ATT,TTLUN,EFN,QIOSB
-QIOSMC:	QIOW$	SF.SMC,TTLUN,EFN,QIOSB,<TCBIN,2>
-QIOEF:	QIOW$	IO.ACC,EFLUN,EFN,QIOSB,<,,,,>
-QIOWF:	QIOW$	IO.CRE,WFLUN,EFN,QIOSB,<,,,,>
+QIOSMC:	QIOW$	SF.SMC,TTLUN,EFN,QIOSB,,<TCBIN,2>
+QIOEF:	QIOW$	IO.ACC,EFLUN,EFN,QIOSB,,<,,,,>
+QIOWF:	QIOW$	IO.CRE,WFLUN,EFN,QIOSB,,<,,,,>
 TCBIN:	db	TC.BIN,1
 
 TTQLEN:	db	0		; TTY queue length (number of chars in queue)
