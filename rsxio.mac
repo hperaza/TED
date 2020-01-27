@@ -72,10 +72,6 @@ TTINIT:	call	TTCLR		; init output buffer
 	ld	hl,TCKSEC
 	ld	c,I.TCKS
 	SC	.GIN		; get ticks/sec for timing functions
-	ld	de,TTAST
-	ld	c,AST.UC
-	SC	.ASTDF		; specify unsolicited char AST
-	ret	c
 	ld	de,TMAST
 	ld	c,AST.CK
 	SC	.ASTDF		; specify mark-time AST
@@ -754,7 +750,7 @@ EXIT:	call	TTFLSH
 
 GTKBUF:	ds	GTKSZ
 
-QIOATT:	QIOW$	IO.ATT,TTLUN,EFN,QIOSB
+QIOATT:	QIOW$	IO.ATT,TTLUN,EFN,QIOSB,,<TTAST>
 QIOSMC:	QIOW$	SF.SMC,TTLUN,EFN,QIOSB,,<TCBIN,2>
 QIOEF:	QIOW$	IO.ACC,EFLUN,EFN,QIOSB,,<,,,,>
 QIOWF:	QIOW$	IO.CRE,WFLUN,EFN,QIOSB,,<,,,,>
