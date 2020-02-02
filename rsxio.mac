@@ -40,7 +40,6 @@ WFLUN	equ	2		; LUN for work file
 
 EFN	equ	3		; event flag number for QIO
 ASTEFN	equ	4		; event flag for AST
-MKTEFN	equ	5		; event flag for mark time
 
 ;=======================================================================
 
@@ -72,10 +71,6 @@ TTINIT:	call	TTCLR		; init output buffer
 	ld	hl,TCKSEC
 	ld	c,I.TCKS
 	SC	.GIN		; get ticks/sec for timing functions
-	ld	de,TMAST
-	ld	c,AST.CK
-	SC	.ASTDF		; specify mark-time AST
-	ret	c
 	ld	de,'TI'
 	ld	c,0
 	ld	b,TTLUN
@@ -130,17 +125,19 @@ gc3:	ld	a,(UFLAG)
 	or	a
 	jr	z,gc4
 
-	ld	c,-1
+	ld	bc,0
+	ld	e,0
 	SC	.CMKT		; cancel any outstanding mark time requests
 
 	ld	a,(TCKSEC)
 	rrca
 	rrca
 	and	3Fh		; 0.25 secs
-	ld	e,a
-	ld	d,0
-	ld	hl,0
-	ld	c,MKTEFN	; flag is actually unused
+	ld	l,a
+	ld	h,0
+	ld	d,1		; units = ticks
+	ld	e,0		; no EFN
+	ld	bc,TMAST	; AST routine address
 	SC	.MRKT
 
 gc4:	ld	e,ASTEFN
