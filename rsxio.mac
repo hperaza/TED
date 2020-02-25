@@ -105,7 +105,7 @@ GETC:	push	hl
 	push	bc
 	call	TTFLSH
 gc0:	ld	e,ASTEFN
-	SC	.CLRFL
+	SC	.CLEF		; clear event flag
 
 	ld	a,(TTQLEN)	; check TTY queue length
 	or	a
@@ -141,7 +141,7 @@ gc3:	ld	a,(UFLAG)
 	SC	.MRKT
 
 gc4:	ld	e,ASTEFN
-	SC	.WTFLG
+	SC	.WTSE
 	jr	gc0
 
 gc1:	di
@@ -207,7 +207,7 @@ TTAST:	ex	(sp),hl		; fetch argument
 	ld	hl,ASTFLG
 	set	1,(hl)		; signal char arrived
 	ld	e,ASTEFN
-	SC	.SETFL		; and set event flag
+	SC	.SETF		; and set event flag
 	pop	bc
 	pop	de
 	pop	hl
@@ -220,7 +220,7 @@ TMAST:	push	hl
 	ld	hl,ASTFLG
 	set	0,(hl)		; signal time event arrived
 	ld	e,ASTEFN
-	SC	.SETFL		; and set event flag
+	SC	.SETF		; and set event flag
 	pop	de
 	pop	hl
 	SC	.ASTX
