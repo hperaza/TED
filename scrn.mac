@@ -1077,7 +1077,7 @@ INSLNB:	push	hl
 	inc	hl
 	ld	h,(hl)
 	ld	l,a
-	call	INSBUF		; insert a line into text buffer
+	call	INSBUF		; insert a line in text buffer
 	jp	c,SCRERR	; on error, clear screen and home cursor,
 				;  print "WORK FILE OVERFLOW" and go back
 				;   to command mode
@@ -2006,16 +2006,15 @@ ins1:	dec	hl
 	dec	hl
 	dec	a
 	jp	p,ins1		; loop
+
+	call	HASSRG		; terminal supports scroll region?
+	jr	nz,ins4		; branch if yes
+
 	ld	a,(CURY)
 	cp	0+(VSIZE-2)/2+1	; cursor line > 11? (mid of edit window)
 	jr	nc,ins4		; jump if yes
 	call	SCRLDN		; else scroll down
-	call	HASSRG		; terminal supports scroll region?
-	jr	z,ins2		; branch if not to display ruler and line#
-	ld	a,1
-	ld	(UFLAG),a	; else set update status flag
-	jr	ins3
-ins2:	call	STATUS		; display ruler and current line number
+	call	STATUS		; display ruler and current line number
 ins3:	call	CLRLN		; clear cursor line
 	ld	b,0
 	ld	a,(CURY)	; get cursor line

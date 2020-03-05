@@ -92,6 +92,7 @@ TTINIT:	call	TTCLR		; init output buffer
 
 PUTC:	push	af
 	push	bc
+	and	7Fh
 	ld	c,a
 	call	PUTCH
 	pop	bc
