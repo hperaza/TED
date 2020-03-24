@@ -300,6 +300,7 @@ FCREAT:	push	hl
 	ld	(QIOEF+Q.P1),hl
 	ld	hl,0		; no preallocated blocks
 	ld	(QIOEF+Q.P2),hl
+	ld	(QIOEF+Q.P2+2),hl
 	ld	hl,QIOEF
 	SC	.QIO		; .QIOW
 	jr	c,fc1		; if queuing failed
