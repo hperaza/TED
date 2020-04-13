@@ -113,12 +113,10 @@ gc0:	ld	e,ASTEFN
 	jr	nz,gc1
 
 	ld	hl,ASTFLG
-	di
 	bit	0,(hl)		; time mark?
-	res	0,(hl)
-	ei
 	jr	z,gc3
 
+	res	0,(hl)
 	call	UPDST
 	call	TTFLSH
 
@@ -145,7 +143,7 @@ gc4:	ld	e,ASTEFN
 	SC	.WTSE
 	jr	gc0
 
-gc1:	di
+gc1:	;di
 	ld	hl,(TTQOUT)	; get TTY queue out pointer into HL
 	ld	a,(hl)		; get byte from queue
 	inc	hl
@@ -158,7 +156,7 @@ gc1:	di
 gc2:	ld	(TTQOUT),hl	; store pointer
 	ld	hl,TTQLEN
 	dec	(hl)		; decrement TTY input queue length
-	ei
+	;ei
 	ld	a,c
 	pop	bc
 	pop	de
@@ -169,7 +167,7 @@ gc2:	ld	(TTQOUT),hl	; store pointer
 
 UNGETC:	push	hl
 	push	de
-	di
+	;di
 	ld	a,(TTQLEN)
 	cp	64		; check console input queue length
 	jr	z,tti2		; return if queue full
@@ -183,19 +181,19 @@ UNGETC:	push	hl
 tti1:	ld	(TTQIN),hl	; store pointer back
 	ld	hl,TTQLEN	; increment queue length
 	inc	(hl)
-tti2:	ei
+tti2:	;ei
 	pop	de
 	pop	hl
 	ret
 
 ; Reset console input queue
 
-TTQCLR:	di
+TTQCLR:	;di
 	ld	hl,(TTQOUT)
 	ld	(TTQIN),hl	; make out ptr = in ptr
 	xor	a
 	ld	(TTQLEN),a	; clear queue length (no bytes stored)
-	ei
+	;ei
 	ret
 
 ; AST terminal input
