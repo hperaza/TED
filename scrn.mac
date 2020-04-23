@@ -2007,14 +2007,21 @@ ins1:	dec	hl
 	dec	a
 	jp	p,ins1		; loop
 
-	call	HASSRG		; terminal supports scroll region?
-	jr	nz,ins4		; branch if yes
-
 	ld	a,(CURY)
+ if 0
 	cp	0+(VSIZE-2)/2+1	; cursor line > 11? (mid of edit window)
 	jr	nc,ins4		; jump if yes
+ else
+	cp	2		; cursor line > 2??
+	jr	nc,ins4		; jump if yes
+ endif
 	call	SCRLDN		; else scroll down
-	call	STATUS		; display ruler and current line number
+	call	HASSRG		; terminal supports scroll region?
+	jr	z,ins2		; branch if not
+	ld	a,1
+	ld	(UFLAG),a	; else set update status flag
+	jr	ins3
+ins2:	call	STATUS		; display ruler and current line number
 ins3:	call	CLRLN		; clear cursor line
 	ld	b,0
 	ld	a,(CURY)	; get cursor line
