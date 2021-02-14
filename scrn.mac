@@ -258,8 +258,20 @@ jln2:	inc	hl
 	dec	c
 	jr	nz,jln1
 jln21:	push	bc		; remember segment length
+  if 1
+	ld	hl,(TOPLN)	; get top line number into HL
+	ld	a,(CURY)
+	call	ADDHLA		; add line of cursor
+	ld	de,(LASTLN)
+	call	CPDEHL		; compare with last text line number
+	push	af		; remember result
+	call	DELLN		; delete current line
+	pop	af
+	call	nz,CURUP	; move cursor up if line was not the last
+  else
 	call	DELLN		; delete current line
 	call	CURUP		; up one line [!!!not if line was last!!!]
+  endif
 	call	LOADLC		; load line
 	ld	a,(CURLEN)
 	ld	(CURX),a	; position cursor after last char of line
