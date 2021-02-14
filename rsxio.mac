@@ -143,8 +143,7 @@ gc4:	ld	e,ASTEFN
 	SC	.WTSE
 	jr	gc0
 
-gc1:	;di
-	ld	hl,(TTQOUT)	; get TTY queue out pointer into HL
+gc1:	ld	hl,(TTQOUT)	; get TTY queue out pointer into HL
 	ld	a,(hl)		; get byte from queue
 	inc	hl
 	and	7Fh		; strip parity bit, leave ASCII
@@ -152,11 +151,10 @@ gc1:	;di
 	ld	de,TTFIFO+64
 	call	CPDEHL		; pointer at end of buffer?
 	jr	nz,gc2		; jump if not
-	ld	hl,TTFIFO	; else wrap back to start
+	ld	hl,TTFIFO	; else wrap pointer back to start
 gc2:	ld	(TTQOUT),hl	; store pointer
 	ld	hl,TTQLEN
 	dec	(hl)		; decrement TTY input queue length
-	;ei
 	ld	a,c
 	pop	bc
 	pop	de
@@ -167,7 +165,6 @@ gc2:	ld	(TTQOUT),hl	; store pointer
 
 UNGETC:	push	hl
 	push	de
-	;di
 	ld	a,(TTQLEN)
 	cp	64		; check console input queue length
 	jr	z,tti2		; return if queue full
@@ -177,23 +174,24 @@ UNGETC:	push	hl
 	ld	de,TTFIFO+64
 	call	CPDEHL		; pointer at end of buffer?
 	jr	nz,tti1		; jump if not
-	ld	hl,TTFIFO	; else wrap back to start
+	ld	hl,TTFIFO	; else wrap pointer back to start
 tti1:	ld	(TTQIN),hl	; store pointer back
 	ld	hl,TTQLEN	; increment queue length
 	inc	(hl)
-tti2:	;ei
-	pop	de
+tti2:	pop	de
 	pop	hl
 	ret
 
 ; Reset console input queue
 
-TTQCLR:	;di
+TTQCLR:	ld	c,0
+	SC	.ASTCT		; disable ASTs
 	ld	hl,(TTQOUT)
 	ld	(TTQIN),hl	; make out ptr = in ptr
 	xor	a
 	ld	(TTQLEN),a	; clear queue length (no bytes stored)
-	;ei
+	ld	c,1
+	SC	.ASTCT		; enable ASTs
 	ret
 
 ; AST terminal input
@@ -669,8 +667,10 @@ prf4:	ld	a,(hl)
 	djnz	prf4
 	ld	a,';'
 	call	PUTC
-	ld	l,(hl)
-	ld	h,0
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a
 	xor	a
 	call	HLDEC
 	pop	bc

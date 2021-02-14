@@ -49,17 +49,19 @@ Changelog
     memory records.
   * DISPLE routine modified, so display appears correctly.
   * FPUTC1 routine modified, so file output does not contain soft-spaces.
-  * ruler now displays 2-digit numbers if > 10 (does not wrap back to 0).
-  * INSert mode now shown on status line.
+
+- Ruler now displays 2-digit numbers if > 10 (does not wrap back to 0).
+
+- INSert mode now shown on status line.
 
 
 12/01/18
 
 - CR now splits line at cursor column.
 
-- Removed the rather useless commands ^A ^B ^O ^P of the screen mode.
+- Removed the rather-useless ^A ^B ^O ^P screen mode commands.
 
-- Refresh screen keeps original cursor position.
+- Refresh screen now keeps the original cursor position.
 
 - Default mode is now insert (tired of toggling it every time).
 
@@ -78,7 +80,7 @@ Changelog
 - Automatically scroll screen left/right when moving cursor beyond right/left
   edge.
 
-- Split/join now handle tabs correctly.
+- Split and join now handle tabs correctly.
 
 - Delete char left working.
 
@@ -118,7 +120,7 @@ Changelog
 
 - Fixed end of line case when inserting chars.
 
-- Status line now always shows the cursor line (after a small delay).
+- Status line now always shows the current cursor line (after a small delay).
 
 
 24/01/18
@@ -152,4 +154,23 @@ Changelog
 
 - Fixed a stupid bug in the delete-line function of the screen mode (LASTLN
   is a 16-bit value, but was used as 8-bit value in a comparison operation!).
+
+
+01/05/19
+
+- Use WS-like cursor movement in command line too, in addition to the VT
+  arrow keys.
+
+
+17/05/19
+
+- Set terminal mode to binary under RSX180.
+
+
+14/02/21
+
+- Fix wrong cursor position after using backspace on first column of the
+  last line of text.
+
+- RSX180: display file version as 16-bit decimal.
 
