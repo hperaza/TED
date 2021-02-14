@@ -238,7 +238,7 @@ WCREAT:	push	hl
 	SC	.ALUN
 	jr	c,wc1
 	ld	l,IO.CRE	; function code
-	ld	h,0		; non-contiguous file
+	ld	h,SF.TMP	; non-contiguous file, temporary
 	ld	(QIOWF+Q.FUNC),hl
 	ld	hl,WFDB		; FDB
 	ld	(QIOWF+Q.P1),hl
@@ -578,7 +578,9 @@ wrr1:	pop	de
 
 ; Delete work file
 
-WDELET:	push	hl
+WDELET:
+  if 0
+	push	hl
 	ld	a,FN.DIR OR FN.NAME OR FN.EXT OR FN.VER
 	ld	(WFDB+F.ATTR),a
 	ld	hl,IO.DEL	; function code
@@ -594,6 +596,10 @@ WDELET:	push	hl
 	scf
 wd1:	pop	hl
 	ret
+  else
+	xor	a		; temporary file automatically deleted by system
+	ret
+  endif
 
 ; Delete output file
 
