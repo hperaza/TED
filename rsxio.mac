@@ -2,7 +2,7 @@
 ;                                                                      ;
 ;   This file is part of TED, a clone of the screen-oriented text      ;
 ;   editor that was once available for the RT-11 OS.                   ;
-;   Copyright (C) 2011-2020, Hector Peraza.                            ;
+;   Copyright (C) 2011-2022, Hector Peraza.                            ;
 ;                                                                      ;
 ;   This program is free software; you can redistribute it and/or      ;
 ;   modify it under the terms of the GNU General Public License as     ;
@@ -428,6 +428,7 @@ FREAD:	push	hl
 	ld	(QIOWF+Q.BLK),de ; block number
 	ld	hl,0
 	ld	(QIOWF+Q.OFS),hl ; offset
+	ld	(QIOWF+Q.TMO),hl
 	ld	hl,IO.RVB	; function code
 	ld	(QIOWF+Q.FUNC),hl
 	ld	hl,QIOWF
@@ -450,6 +451,7 @@ FWRITE:	push	hl
 	ld	(QIOWF+Q.BLK),de ; block number
 	ld	hl,0
 	ld	(QIOWF+Q.OFS),hl ; offset
+	ld	(QIOWF+Q.VFC),hl
 	ld	hl,IO.WVB	; function code
 	ld	(QIOWF+Q.FUNC),hl
 	ld	hl,QIOWF
@@ -500,6 +502,7 @@ RDBLK:	push	hl
 	ld	(QIOEF+Q.BLK),hl ; blkno
 	ld	hl,0
 	ld	(QIOEF+Q.OFS),hl ; offset
+	ld	(QIOEF+Q.TMO),hl
 	ld	hl,IO.RVB
 	ld	(QIOEF+Q.FUNC),hl  ; function code
 	ld	hl,QIOEF
@@ -551,6 +554,7 @@ WRBLK:	push	hl
 	ld	(QIOEF+Q.BLK),hl ; blkno
 	ld	hl,0
 	ld	(QIOEF+Q.OFS),hl ; offset
+	ld	(QIOEF+Q.VFC),hl
 	ld	hl,IO.WVB
 	ld	(QIOEF+Q.FUNC),hl  ; function code
 	ld	hl,QIOEF
@@ -755,8 +759,8 @@ GTKBUF:	ds	GTKSZ
 
 QIOATT:	QIOW$	IO.ATT,TTLUN,EFN,QIOSB,,<TTAST>
 QIOSMC:	QIOW$	SF.SMC,TTLUN,EFN,QIOSB,,<TCBIN,2>
-QIOEF:	QIOW$	IO.ACC,EFLUN,EFN,QIOSB,,<,,,,>
-QIOWF:	QIOW$	IO.CRE,WFLUN,EFN,QIOSB,,<,,,,>
+QIOEF:	QIOW$	IO.ACC,EFLUN,EFN,QIOSB,,<,,,,,>
+QIOWF:	QIOW$	IO.CRE,WFLUN,EFN,QIOSB,,<,,,,,>
 TCBIN:	db	TC.BIN,1
 
 TTQLEN:	db	0		; TTY queue length (number of chars in queue)
